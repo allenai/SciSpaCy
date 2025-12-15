@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 
+import importlib.util
+
 import pytest
 
 import spacy
@@ -12,8 +14,17 @@ from spacy.language import Language as SpacyModelType
 from scispacy.custom_sentence_segmenter import pysbd_sentencizer
 
 
+_MODEL_NAME = "en_core_sci_sm"
+if importlib.util.find_spec(_MODEL_NAME) is None:  # pragma: no cover - env specific
+    pytest.skip(
+        f"{_MODEL_NAME} is required for whitespace tests; install the model to run them.",
+        allow_module_level=True,
+    )
+_shared_nlp = spacy.load(_MODEL_NAME)
+
+
 class TestWhitespace:
-    nlp = spacy.load("en_core_sci_sm")
+    nlp = _shared_nlp
 
     @pytest.mark.parametrize("text", ["lorem ipsum"])
     def test_tokenizer_splits_single_space(self, text):

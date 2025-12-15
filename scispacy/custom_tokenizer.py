@@ -3,9 +3,12 @@ from typing import List
 from spacy.lang import char_classes
 from spacy.symbols import ORTH
 from spacy.tokenizer import Tokenizer
-from spacy.util import compile_prefix_regex, compile_infix_regex, compile_suffix_regex
 from spacy.language import Language
-
+from spacy.util import (
+    compile_infix_regex,
+    compile_prefix_regex,
+    compile_suffix_regex,
+)
 from scispacy.consts import ABBREVIATIONS
 
 

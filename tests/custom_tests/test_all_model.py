@@ -1,9 +1,14 @@
+import multiprocessing as mp
 import os
+import shutil
 import sys
+
+import pytest
 import spacy
 from spacy.vocab import Vocab
-import shutil
-import pytest
+
+if mp.get_start_method(allow_none=True) != "spawn":  # pragma: no cover - import-time behavior
+    mp.set_start_method("spawn", force=True)
 
 
 def test_custom_segmentation(combined_all_model_fixture):

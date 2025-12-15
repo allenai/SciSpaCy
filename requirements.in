@@ -1,9 +1,10 @@
 numpy
-# NOTE: scipy<1.11 is required when creating the linkers, so that's currently
-# only supported on Python<3.11
-# https://github.com/allenai/scispacy/issues/519#issuecomment-2229915999
+# NOTE: Building the linkers depends on SciPy's sparse matrix serialization.
+# See https://github.com/allenai/scispacy/issues/519#issuecomment-2229915999
+# for historical context; current releases (including the Python 3.13-compatible
+# ones) are handled automatically by scispacy.util.scipy_supports_sparse_float16.
 scipy
-spacy>=3.7.0,<3.8.0
+spacy>=3.8.11,<3.9.0
 spacy-lookups-data
 pandas
 requests>=2.0.0,<3.0.0

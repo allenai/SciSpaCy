@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye
+FROM python:3.13-slim
 
 # install base packages
 RUN apt-get clean \

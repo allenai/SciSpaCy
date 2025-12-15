@@ -24,7 +24,7 @@ pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/e
 
 Note: We strongly recommend that you use an isolated Python environment (such as virtualenv or conda) to install scispacy.
 Take a look below in the "Setting up a virtual environment" section if you need some help with this.
-Additionally, scispacy uses modern features of Python and as such is only available for **Python 3.6 or greater**.
+Additionally, scispacy uses modern features of Python and as such is only available for **Python 3.9 through 3.13**.
 
 
 #### Setting up a virtual environment
@@ -35,10 +35,10 @@ environment you want to use, you can skip to the 'installing via pip' section.
 
 1.  [Follow the installation instructions for Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html).
 
-2.  Create a Conda environment called "scispacy" with Python 3.9 (any version >= 3.6 should work):
+2.  Create a Conda environment called "scispacy" with Python 3.13 (any supported version between 3.9 and 3.13 will work):
 
     ```bash
-    mamba create -n scispacy python=3.10
+    mamba create -n scispacy python=3.13
     ```
 
 3.  Activate the Mamba environment. You will need to activate the Conda environment in each terminal in which you want to use scispaCy.
@@ -331,4 +331,3 @@ If you use ScispaCy in your research, please cite [ScispaCy: Fast and Robust Mod
 
 ScispaCy is an open-source project developed by [the Allen Institute for Artificial Intelligence (AI2)](http://www.allenai.org).
 AI2 is a non-profit institute with the mission to contribute to humanity through high-impact AI research and engineering.
-

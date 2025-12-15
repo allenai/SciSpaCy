@@ -244,15 +244,16 @@ class AbbreviationDetector:
                 rules[long.text] = long
                 # Add a rule to a matcher to find exactly this substring.
                 self.global_matcher.add(long.text, [[{"ORTH": x.text} for x in short]])
-        to_remove = set()
-        global_matches = self.global_matcher(doc)
-        for match, start, end in global_matches:
-            string_key = self.global_matcher.vocab.strings[match]  # type: ignore
-            to_remove.add(string_key)
-            all_occurences[rules[string_key]].add(doc[start:end])
-        for key in to_remove:
-            # Clean up the global matcher.
-            self.global_matcher.remove(key)
+        if rules:
+            to_remove = set()
+            global_matches = self.global_matcher(doc)
+            for match, start, end in global_matches:
+                string_key = self.global_matcher.vocab.strings[match]  # type: ignore
+                to_remove.add(string_key)
+                all_occurences[rules[string_key]].add(doc[start:end])
+            for key in to_remove:
+                # Clean up the global matcher.
+                self.global_matcher.remove(key)
 
         return list((k, v) for k, v in all_occurences.items())
 
