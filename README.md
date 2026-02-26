@@ -84,6 +84,11 @@ pip install CMD-V(to paste the copied URL)
 | en_ner_bc5cdr_md |  A spaCy NER model trained on the BC5CDR corpus. | [Download](https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz)|
 | en_ner_bionlp13cg_md |  A spaCy NER model trained on the BIONLP13CG corpus. |[Download](https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bionlp13cg_md-0.5.4.tar.gz)|
 
+### Model output notes
+
+- `en_core_sci_sm`, `en_core_sci_md`, `en_core_sci_lg`, and `en_core_sci_scibert` include a **mention detector** trained on [MedMentions](https://aclanthology.org/P18-1010/), so detected spans are assigned the generic spaCy label `ENTITY` rather than fine-grained entity types.
+- The `en_ner_*` models are corpus-specific biomedical NER models and produce label sets defined by their respective training corpora.
+
 
 ## Additional Pipeline Components
 
@@ -331,4 +336,3 @@ If you use ScispaCy in your research, please cite [ScispaCy: Fast and Robust Mod
 
 ScispaCy is an open-source project developed by [the Allen Institute for Artificial Intelligence (AI2)](http://www.allenai.org).
 AI2 is a non-profit institute with the mission to contribute to humanity through high-impact AI research and engineering.
-
