@@ -106,6 +106,27 @@ def http_get(url: str, temp_file: IO) -> None:
     pbar.close()
 
 
+def _find_existing_cache_file(url: str, cache_dir: str) -> Optional[str]:
+    """
+    Check if a cached file already exists for the given URL.
+    Since the filename includes the etag (which we may not have without a
+    network call), we look for any file matching the URL hash prefix.
+    """
+    url_bytes = url.encode("utf-8")
+    url_hash = sha256(url_bytes).hexdigest()
+    last_part = url.split("/")[-1]
+
+    for filename in os.listdir(cache_dir):
+        # Cached files have the pattern: <url_hash>.<etag_hash>.<last_part>
+        # or <url_hash>.<last_part> (if no etag)
+        if filename.startswith(url_hash) and filename.endswith("." + last_part):
+            candidate = os.path.join(cache_dir, filename)
+            # Make sure it's a real cached file (not the .json metadata)
+            if not filename.endswith(".json") and os.path.isfile(candidate):
+                return candidate
+    return None
+
+
 def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
     """
     Given a URL, look for the corresponding dataset in the local cache.
@@ -116,7 +137,18 @@ def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
 
     os.makedirs(cache_dir, exist_ok=True)
 
-    response = requests.head(url, allow_redirects=True)
+    # Check if we already have a cached copy before making any network calls.
+    existing = _find_existing_cache_file(url, cache_dir)
+    if existing is not None:
+        return existing
+
+    # No cached file found; try to fetch metadata from the remote server.
+    try:
+        response = requests.head(url, allow_redirects=True)
+    except requests.exceptions.ConnectionError:
+        raise IOError(
+            "Connection failed for url {} and no cached copy was found".format(url)
+        )
     if response.status_code != 200:
         raise IOError(
             "HEAD request failed for url {} with status code {}".format(
