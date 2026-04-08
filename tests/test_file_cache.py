@@ -59,3 +59,23 @@ class TestFileUtils(unittest.TestCase):
             back_to_url, etag = filename_to_url(filename, cache_dir=self.TEST_DIR)
             assert back_to_url == url
             assert etag == "mytag"
+
+    def test_url_to_filename_length_under_ecryptfs_limit(self):
+        """Filenames (including .json sidecar) must stay under 143 bytes for eCryptfs.
+        See: https://github.com/allenai/scispacy/issues/539
+        """
+        # These are the actual URLs used by scispacy linkers
+        urls = [
+            'https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/data/linkers/2023-04-23/umls/nmslib_index.bin',
+            'https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/data/linkers/2023-04-23/umls/tfidf_vectorizer.joblib',
+            'https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/data/linkers/2023-04-23/umls/tfidf_vectors_sparse.npz',
+            'https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/data/linkers/2023-04-23/umls/concept_aliases.json',
+        ]
+        # Simulate a realistic 64-char hex ETag
+        long_etag = '"d41d8cd98f00b204e9800998ecf8427ed41d8cd98f00b204e9800998ecf8427e"'
+        for url in urls:
+            filename = url_to_filename(url, etag=long_etag)
+            meta_filename = filename + ".json"
+            assert len(meta_filename) < 143, (
+                f"Metadata filename too long for eCryptfs ({len(meta_filename)} >= 143): {meta_filename}"
+            )

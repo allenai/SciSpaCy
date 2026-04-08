@@ -55,9 +55,15 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
     Convert `url` into a hashed filename in a repeatable way.
     If `etag` is specified, append its hash to the url's, delimited
     by a period.
-    """
 
+    Only the file extension from the original URL is preserved (not the
+    full trailing path component) to keep filenames short enough for
+    filesystems with a 143-byte NAME_MAX (e.g. eCryptfs).
+    See: https://github.com/allenai/scispacy/issues/539
+    """
     last_part = url.split("/")[-1]
+    _, ext = os.path.splitext(last_part)
+
     url_bytes = url.encode("utf-8")
     url_hash = sha256(url_bytes)
     filename = url_hash.hexdigest()
@@ -67,7 +73,7 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
         etag_hash = sha256(etag_bytes)
         filename += "." + etag_hash.hexdigest()
 
-    filename += "." + last_part
+    filename += ext
     return filename
 
 
@@ -104,6 +110,33 @@ def http_get(url: str, temp_file: IO) -> None:
             size = temp_file.write(chunk)
             pbar.update(size)
     pbar.close()
+
+
+def _find_existing_cache_file(url: str, cache_dir: str) -> Optional[str]:
+    """
+    Check if a cached file already exists for the given URL.
+    Since the filename includes the etag (which we may not have without a
+    network call), we look for any file matching the URL hash prefix.
+
+    Supports both old-format filenames (<url_hash>.<etag_hash>.<last_part>)
+    and new-format filenames (<url_hash>.<etag_hash>.<ext>).
+    """
+    url_bytes = url.encode("utf-8")
+    url_hash = sha256(url_bytes).hexdigest()
+    last_part = url.split("/")[-1]
+    _, ext = os.path.splitext(last_part)
+
+    for filename in os.listdir(cache_dir):
+        if filename.endswith(".json") or not os.path.isfile(
+            os.path.join(cache_dir, filename)
+        ):
+            continue
+        if not filename.startswith(url_hash):
+            continue
+        if filename.endswith("." + last_part) or filename.endswith(ext):
+            return os.path.join(cache_dir, filename)
+    return None
+
 
 
 def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
