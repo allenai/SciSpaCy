@@ -69,13 +69,13 @@ class PerClassScorer:
 
         # Compute the precision, recall and f1 for all spans jointly.
         sum_true_positives = sum(
-            {v for k, v in self._true_positives.items() if k != "untyped"}
+            [v for k, v in self._true_positives.items() if k != "untyped"]
         )
         sum_false_positives = sum(
-            {v for k, v in self._false_positives.items() if k != "untyped"}
+            [v for k, v in self._false_positives.items() if k != "untyped"]
         )
         sum_false_negatives = sum(
-            {v for k, v in self._false_negatives.items() if k != "untyped"}
+            [v for k, v in self._false_negatives.items() if k != "untyped"]
         )
         precision, recall, f1_measure = self._compute_metrics(
             sum_true_positives, sum_false_positives, sum_false_negatives
