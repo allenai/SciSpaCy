@@ -251,9 +251,12 @@ def _handle_sentence(examples: List[Tuple[str, str]]) -> SpacyNerExample:
         sent += word
         sent += " "
         if entity != "O":
-            if in_entity:
+            if in_entity and not entity.startswith("B-"):
                 pass
             else:
+                if in_entity:
+                    end_index = current_index - 1
+                    entities.append((start_index, end_index, entity_type.replace("-", "_")))
                 start_index = current_index
                 in_entity = True
                 entity_type = entity[2:].upper()
