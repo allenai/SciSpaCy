@@ -56,8 +56,6 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
     If `etag` is specified, append its hash to the url's, delimited
     by a period.
     """
-
-    last_part = url.split("/")[-1]
     url_bytes = url.encode("utf-8")
     url_hash = sha256(url_bytes)
     filename = url_hash.hexdigest()
@@ -67,7 +65,12 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
         etag_hash = sha256(etag_bytes)
         filename += "." + etag_hash.hexdigest()
 
-    filename += "." + last_part
+    # Only keep the file extension to stay within filesystem NAME_MAX
+    # limits (e.g. 143 bytes on eCryptfs).
+    _, ext = os.path.splitext(url.split("/")[-1])
+    if ext:
+        filename += ext
+
     return filename
 
 
@@ -106,6 +109,19 @@ def http_get(url: str, temp_file: IO) -> None:
     pbar.close()
 
 
+def _find_legacy_cache_path(
+    url: str, etag: Optional[str], cache_dir: str
+) -> Optional[str]:
+    """Check for a cached file using the old naming scheme (full trailing URL component)."""
+    last_part = url.split("/")[-1]
+    filename = sha256(url.encode("utf-8")).hexdigest()
+    if etag:
+        filename += "." + sha256(etag.encode("utf-8")).hexdigest()
+    filename += "." + last_part
+    path = os.path.join(cache_dir, filename)
+    return path if os.path.exists(path) else None
+
+
 def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
     """
     Given a URL, look for the corresponding dataset in the local cache.
@@ -131,6 +147,11 @@ def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
     cache_path = os.path.join(cache_dir, filename)
 
     if not os.path.exists(cache_path):
+        # Check for files cached under the old naming scheme, which appended
+        # the full trailing URL component instead of just the extension.
+        legacy_path = _find_legacy_cache_path(url, etag, cache_dir)
+        if legacy_path is not None:
+            return legacy_path
         # Download to temporary file, then copy to cache dir once finished.
         # Otherwise you get corrupt cache entries if the download gets interrupted.
         with tempfile.NamedTemporaryFile() as temp_file:  # type: IO
