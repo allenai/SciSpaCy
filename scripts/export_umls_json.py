@@ -49,7 +49,7 @@ def main(
         with_more_than_one_alias_count += 1 if len(concept['aliases']) > 1 else 0
         without_type_count += 1 if len(concept['types']) == 0 else 0
         with_one_type_count += 1 if len(concept['types']) == 1 else 0
-        with_more_than_one_type_count += 1 if len(concept['types']) >= 1 else 0
+        with_more_than_one_type_count += 1 if len(concept['types']) > 1 else 0
         without_definition_count += 1 if 'definition' not in concept else 0
         with_definition_pref_source_count += 1 if concept.get('is_from_preferred_source') == 'Y' else 0
         with_definition_other_sources_count += 1 if concept.get('is_from_preferred_source') == 'N' else 0

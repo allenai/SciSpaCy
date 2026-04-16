@@ -51,7 +51,7 @@ def main(input_path: str, output_path: str, min_word_frequency: int):
 
     with open(output_path, "w") as _jsonl_file:
         _jsonl_file.write(
-            json.dumps({"lang": "en", "settings": {"oov_prob": -20.502029418945312}})
+            json.dumps({"lang": "en", "settings": {"oov_prob": oov_prob}})
         )
         _jsonl_file.write("\n")
 
