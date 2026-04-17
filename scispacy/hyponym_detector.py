@@ -38,7 +38,7 @@ class HyponymDetector:
     ):
         self.nlp = nlp
 
-        self.patterns = BASE_PATTERNS
+        self.patterns = list(BASE_PATTERNS)
         if extended:
             self.patterns.extend(EXTENDED_PATTERNS)
 
