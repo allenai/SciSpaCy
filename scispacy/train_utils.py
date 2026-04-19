@@ -26,7 +26,8 @@ def evaluate_ner(
 
     metrics = scorer.get_metric()
     if dump_path is not None:
-        json.dump(metrics, open(dump_path, "a+"))
+        with open(dump_path, "w") as f:
+            json.dump(metrics, f)
     for name, metric in metrics.items():
         if "overall" in name or "untyped" in name or verbose:
             print(f"{name}: \t\t {metric}")
