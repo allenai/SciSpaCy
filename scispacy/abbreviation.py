@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional, Set, Dict
+from typing import Any, Tuple, List, Optional, Set, Dict
 from collections import defaultdict
 from spacy.tokens import Span, Doc
 from spacy.matcher import Matcher
@@ -256,7 +256,7 @@ class AbbreviationDetector:
 
         return list((k, v) for k, v in all_occurences.items())
 
-    def make_short_form_serializable(self, abbreviation: Span):
+    def make_short_form_serializable(self, abbreviation: Span) -> Dict[str, Any]:
         """
         Converts the abbreviations into a short form that is serializable to enable multiprocessing
 

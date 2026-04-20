@@ -3,12 +3,13 @@ import spacy
 import scipy
 from spacy.language import Language
 from spacy.tokens import Doc
+from spacy.vocab import Vocab
 
 from scispacy.custom_sentence_segmenter import pysbd_sentencizer
 from scispacy.custom_tokenizer import combined_rule_tokenizer
 
 
-def save_model(nlp: Language, output_path: str):
+def save_model(nlp: Language, output_path: str) -> None:
     nlp.to_disk(output_path)
 
 
@@ -36,10 +37,10 @@ class WhitespaceTokenizer:
     ... use nlp("here is some text") as normal.
     """
 
-    def __init__(self, vocab):
+    def __init__(self, vocab: Vocab) -> None:
         self.vocab = vocab
 
-    def __call__(self, text):
+    def __call__(self, text: str) -> Doc:
         words = text.split(" ")
         # All tokens 'own' a subsequent space character in
         # this tokenizer. This is a technicality and probably

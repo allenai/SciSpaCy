@@ -98,10 +98,10 @@ def med_mentions_reader(
 
 
 @spacy.registry.readers("specialized_ner_reader")
-def specialized_ner_reader(file_path: str):
+def specialized_ner_reader(file_path: str) -> Callable[[Language], Iterator[Example]]:
     original_examples = read_ner_from_tsv(file_path)
 
-    def corpus(nlp: Language):
+    def corpus(nlp: Language) -> Iterator[Example]:
         for original_example in original_examples:
             doc = nlp.make_doc(original_example[0])
             with warnings.catch_warnings():

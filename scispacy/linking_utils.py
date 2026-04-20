@@ -68,7 +68,7 @@ class Entity(NamedTuple):
     types: List[str] = []
     definition: Optional[str] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         rep = ""
         num_aliases = len(self.aliases)
         rep = rep + f"CUI: {self.concept_id}, Name: {self.canonical_name}\n"
@@ -152,7 +152,7 @@ class KnowledgeBase:
     def __init__(
         self,
         file_path: Union[None, str, Path, Iterable[Entity]] = None,
-    ):
+    ) -> None:
         if file_path is None:
             raise ValueError(
                 "Do not use the default arguments to KnowledgeBase. "
@@ -167,7 +167,7 @@ class UmlsKnowledgeBase(KnowledgeBase):
         self,
         file_path: Union[str, Path, Iterable[Entity]] = DEFAULT_UMLS_PATH,
         types_file_path: str = DEFAULT_UMLS_TYPES_PATH,
-    ):
+    ) -> None:
         super().__init__(file_path)
 
         self.semantic_type_tree: UmlsSemanticTypeTree = construct_umls_tree_from_tsv(
@@ -179,7 +179,7 @@ class Mesh(KnowledgeBase):
     def __init__(
         self,
         file_path: str = "https://ai2-s2-scispacy.s3-us-west-2.amazonaws.com/data/kbs/2023-04-23/umls_mesh_2022.jsonl",  # noqa
-    ):
+    ) -> None:
         super().__init__(file_path)
 
 
@@ -187,7 +187,7 @@ class GeneOntology(KnowledgeBase):
     def __init__(
         self,
         file_path: str = "https://ai2-s2-scispacy.s3-us-west-2.amazonaws.com/data/kbs/2023-04-23/umls_go_2022.jsonl",  # noqa
-    ):
+    ) -> None:
         super().__init__(file_path)
 
 
@@ -195,7 +195,7 @@ class HumanPhenotypeOntology(KnowledgeBase):
     def __init__(
         self,
         file_path: str = "https://ai2-s2-scispacy.s3-us-west-2.amazonaws.com/data/kbs/2023-04-23/umls_hpo_2022.jsonl",  # noqa
-    ):
+    ) -> None:
         super().__init__(file_path)
 
 
@@ -203,5 +203,5 @@ class RxNorm(KnowledgeBase):
     def __init__(
         self,
         file_path: str = "https://ai2-s2-scispacy.s3-us-west-2.amazonaws.com/data/kbs/2023-04-23/umls_rxnorm_2022.jsonl",  # noqa
-    ):
+    ) -> None:
         super().__init__(file_path)

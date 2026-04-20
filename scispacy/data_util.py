@@ -152,8 +152,8 @@ def read_full_med_mentions(
     span_only: bool = False,
     spacy_format: bool = True,
     use_umls_ids: bool = False,
-):
-    def _cleanup_dir(dir_path: str):
+) -> Tuple[List, List, List]:
+    def _cleanup_dir(dir_path: str) -> None:
         if os.path.exists(dir_path):
             shutil.rmtree(dir_path)
 
@@ -200,7 +200,7 @@ def read_full_med_mentions(
     dev_examples = []
     test_examples = []
 
-    def label_function(label):
+    def label_function(label: str) -> str:
         if span_only:
             return "ENTITY"
         if label_mapping is None:

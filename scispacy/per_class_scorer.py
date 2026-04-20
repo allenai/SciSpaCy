@@ -4,7 +4,7 @@ import copy
 
 
 class PerClassScorer:
-    def __init__(self):
+    def __init__(self) -> None:
         # These will hold per label span counts.
         self._true_positives: Dict[str, int] = defaultdict(int)
         self._false_positives: Dict[str, int] = defaultdict(int)
@@ -38,7 +38,7 @@ class PerClassScorer:
         for untyped_span in untyped_gold_spans:
             self._false_negatives["untyped"] += 1
 
-    def get_metric(self, reset: bool = False):
+    def get_metric(self, reset: bool = False) -> Dict[str, float]:
         """
         Returns
         -------
@@ -90,7 +90,7 @@ class PerClassScorer:
     @staticmethod
     def _compute_metrics(
         true_positives: int, false_positives: int, false_negatives: int
-    ):
+    ) -> Tuple[float, float, float]:
         precision = float(true_positives) / float(
             true_positives + false_positives + 1e-13
         )
@@ -98,7 +98,7 @@ class PerClassScorer:
         f1_measure = 2.0 * ((precision * recall) / (precision + recall + 1e-13))
         return precision, recall, f1_measure
 
-    def reset(self):
+    def reset(self) -> None:
         self._true_positives = defaultdict(int)
         self._false_positives = defaultdict(int)
         self._false_negatives = defaultdict(int)
