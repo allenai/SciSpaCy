@@ -103,7 +103,7 @@ def construct_umls_tree_from_tsv(filepath: str) -> UmlsSemanticTypeTree:
 
         node_stack.append(node)
 
-    def attach_children(node: SemanticTypeNode, stack: Deque[SemanticTypeNode]):
+    def attach_children(node: SemanticTypeNode, stack: Deque[SemanticTypeNode]) -> None:
         while stack and stack[0].level > node.level:
             popped = stack.popleft()
             attach_children(popped, stack)

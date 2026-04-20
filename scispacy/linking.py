@@ -94,7 +94,7 @@ class EntityLinker:
         filter_for_definitions: bool = True,
         max_entities_per_mention: int = 5,
         linker_name: Optional[str] = None,
-    ):
+    ) -> None:
         Span.set_extension("kb_ents", default=[], force=True)
 
         self.candidate_generator = candidate_generator or CandidateGenerator(

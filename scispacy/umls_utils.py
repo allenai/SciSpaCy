@@ -43,7 +43,7 @@ def read_umls_concepts(
     source: Optional[str] = None,
     lang: str = "ENG",
     non_suppressed: bool = True,
-):
+) -> None:
     """
     Read the concepts file MRCONSO.RRF from a UMLS release and store it in
     concept_details dictionary. Each concept is represented with
@@ -109,7 +109,7 @@ def read_umls_concepts(
                 ] = concept_name  # set as canonical name
 
 
-def read_umls_types(meta_path: str, concept_details: Dict):
+def read_umls_types(meta_path: str, concept_details: Dict) -> None:
     """
     Read the types file MRSTY.RRF from a UMLS release and store it in
     concept_details dictionary. This function adds the `types` field
@@ -137,7 +137,7 @@ def read_umls_types(meta_path: str, concept_details: Dict):
                 concept["types"].append(concept_type["TUI"])
 
 
-def read_umls_definitions(meta_path: str, concept_details: Dict):
+def read_umls_definitions(meta_path: str, concept_details: Dict) -> None:
     """
     Read the types file MRDEF.RRF from a UMLS release and store it in
     concept_details dictionary. This function adds the `definition` field

@@ -4,12 +4,15 @@ import tqdm
 from spacy.language import Language
 
 from scispacy.per_class_scorer import PerClassScorer
-from typing import Optional
+from typing import Any, Collection, Dict, Optional, Tuple
 
 
 def evaluate_ner(
-    nlp: Language, eval_data, dump_path: Optional[str] = None, verbose: bool = False
-) -> PerClassScorer:
+    nlp: Language,
+    eval_data: Collection[Tuple[str, Dict[str, Any]]],
+    dump_path: Optional[str] = None,
+    verbose: bool = False,
+) -> Dict[str, float]:
     scorer = PerClassScorer()
     print("Evaluating %d rows" % len(eval_data))
     for i, (text, gold_spans) in enumerate(tqdm.tqdm(eval_data)):

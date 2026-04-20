@@ -72,3 +72,9 @@ exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
 
 [tool.setuptools.dynamic]
 version = {attr = "scispacy.version.VERSION"}
+
+[tool.mypy]
+# Flag partially-annotated functions (e.g. params typed but return type missing).
+# Stricter than the default but much less disruptive than `disallow_untyped_defs`,
+# which would require annotating every function in the codebase at once.
+disallow_incomplete_defs = true

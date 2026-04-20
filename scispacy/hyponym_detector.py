@@ -1,5 +1,5 @@
 from spacy.matcher import Matcher
-from spacy.tokens import Token, Doc
+from spacy.tokens import Token, Doc, Span
 from spacy.language import Language
 
 from scispacy.hearst_patterns import BASE_PATTERNS, EXTENDED_PATTERNS
@@ -35,7 +35,7 @@ class HyponymDetector:
 
     def __init__(
         self, nlp: Language, name: str = "hyponym_detector", extended: bool = False
-    ):
+    ) -> None:
         self.nlp = nlp
 
         self.patterns = BASE_PATTERNS
@@ -61,7 +61,7 @@ class HyponymDetector:
             if pattern["position"] == "last":
                 self.last.add(pattern["label"])
 
-    def expand_to_noun_compound(self, token: Token, doc: Doc):
+    def expand_to_noun_compound(self, token: Token, doc: Doc) -> Span:
         """
         Expand a token to it's noun phrase based
         on a simple POS tag heuristic.
@@ -89,12 +89,12 @@ class HyponymDetector:
 
         return doc[start:end]
 
-    def find_noun_compound_head(self, token: Token):
+    def find_noun_compound_head(self, token: Token) -> Token:
         while token.head.pos_ in {"PROPN", "NOUN", "PRON"} and token.dep_ == "compound":
             token = token.head
         return token
 
-    def __call__(self, doc: Doc):
+    def __call__(self, doc: Doc) -> Doc:
         """
         Runs the matcher on the Doc object and sets token and
         doc level attributes for hypernym and hyponym relations.
