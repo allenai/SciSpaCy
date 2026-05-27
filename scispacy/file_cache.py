@@ -97,6 +97,7 @@ def filename_to_url(filename: str, cache_dir: Optional[str] = None) -> Tuple[str
 
 def http_get(url: str, temp_file: IO) -> None:
     req = requests.get(url, stream=True)
+    req.raise_for_status()
     total = int(req.headers.get("content-length", 0))
     pbar = tqdm(total=total, unit="iB", unit_scale=True, unit_divisor=1024)
     for chunk in req.iter_content(chunk_size=1024):
