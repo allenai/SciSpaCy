@@ -116,6 +116,13 @@ def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
 
     os.makedirs(cache_dir, exist_ok=True)
 
+    url_hash = sha256(url.encode("utf-8")).hexdigest()
+    for name in os.listdir(cache_dir):
+        if name.startswith(url_hash + ".") and not name.endswith(".json"):
+            cache_path = os.path.join(cache_dir, name)
+            if os.path.isfile(cache_path):
+                return cache_path
+
     response = requests.head(url, allow_redirects=True)
     if response.status_code != 200:
         raise IOError(
