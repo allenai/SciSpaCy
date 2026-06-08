@@ -4,7 +4,7 @@ import datetime
 import os.path
 from collections import defaultdict
 from pathlib import Path
-
+from zipfile import BadZipFile
 import scipy
 import numpy
 import joblib
@@ -165,9 +165,16 @@ def load_approximate_nearest_neighbours_index(
         but reducing to around ~100 will increase query speed by an order
         of magnitude for a small performance hit.
     """
-    concept_alias_tfidfs = scipy.sparse.load_npz(
-        cached_path(linker_paths.tfidf_vectors)
-    ).astype(numpy.float32)
+    tfidf_vectors_path = cached_path(linker_paths.tfidf_vectors)
+    try:
+        concept_alias_tfidfs = scipy.sparse.load_npz(
+            tfidf_vectors_path
+        ).astype(numpy.float32)
+    except (BadZipFile, EOFError, ValueError):
+        raise IOError(
+            f"The tfidf vectors file appears to be corrupted: {tfidf_vectors_path}. "
+            "Please delete this file and try again so it can be re-downloaded."
+        )
     ann_index = nmslib.init(
         method="hnsw",
         space="cosinesimil_sparse",

@@ -1,7 +1,8 @@
+import os
 import unittest
 import tempfile
 
-from scispacy.candidate_generation import CandidateGenerator, create_tfidf_ann_index, MentionCandidate
+from scispacy.candidate_generation import CandidateGenerator, create_tfidf_ann_index, MentionCandidate, load_approximate_nearest_neighbours_index, LinkerPaths
 from scispacy.umls_utils import UmlsKnowledgeBase
 
 
@@ -55,3 +56,14 @@ class TestCandidateGeneration(unittest.TestCase):
         results = candidate_generator([], 10)
 
         assert results == []
+
+
+    def test_load_npz_corrupt_file_raises_useful_error(self):
+        with tempfile.TemporaryDirectory() as dir_name:
+            corrupt_file = os.path.join(dir_name, "tfidf_vectors_sparse.npz")
+            with open(corrupt_file, "wb") as f:
+                f.write(b"PK\x03\x04truncated")
+            linker_paths = LinkerPaths.from_directory(dir_name)
+            with self.assertRaises(IOError):
+                load_approximate_nearest_neighbours_index(linker_paths)
+
