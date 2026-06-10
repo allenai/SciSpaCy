@@ -67,7 +67,9 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
         etag_hash = sha256(etag_bytes)
         filename += "." + etag_hash.hexdigest()
 
-    filename += "." + last_part
+    _, ext = os.path.splitext(last_part)
+    if ext:
+        filename += ext
     return filename
 
 
