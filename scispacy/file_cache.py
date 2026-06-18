@@ -55,17 +55,22 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
     Convert `url` into a hashed filename in a repeatable way.
     If `etag` is specified, append its hash to the url's, delimited
     by a period.
+
+    Hash prefixes are truncated to 16 hex chars (64 bits) to keep
+    filenames under the 143-character limit on eCryptfs/encfs
+    encrypted filesystems.  The full URL and ETag are preserved in
+    the companion .json metadata file for cache integrity.
     """
 
     last_part = url.split("/")[-1]
     url_bytes = url.encode("utf-8")
     url_hash = sha256(url_bytes)
-    filename = url_hash.hexdigest()
+    filename = url_hash.hexdigest()[:16]
 
     if etag:
         etag_bytes = etag.encode("utf-8")
         etag_hash = sha256(etag_bytes)
-        filename += "." + etag_hash.hexdigest()
+        filename += "." + etag_hash.hexdigest()[:16]
 
     filename += "." + last_part
     return filename
@@ -106,6 +111,35 @@ def http_get(url: str, temp_file: IO) -> None:
     pbar.close()
 
 
+def _url_to_filename_legacy(url: str, etag: Optional[str] = None) -> str:
+    """Legacy filename format using full 64-char SHA256 hex digests.
+    Used only for migrating old cache entries."""
+    last_part = url.split("/")[-1]
+    url_bytes = url.encode("utf-8")
+    url_hash = sha256(url_bytes)
+    filename = url_hash.hexdigest()
+    if etag:
+        etag_bytes = etag.encode("utf-8")
+        etag_hash = sha256(etag_bytes)
+        filename += "." + etag_hash.hexdigest()
+    filename += "." + last_part
+    return filename
+
+
+def _migrate_legacy_cache(cache_dir: str, url: str, etag: Optional[str], new_path: str) -> Optional[str]:
+    """If a legacy (long) cache entry exists, rename it to the new short format."""
+    legacy_name = _url_to_filename_legacy(url, etag)
+    legacy_path = os.path.join(cache_dir, legacy_name)
+    if os.path.exists(legacy_path) and not os.path.exists(new_path):
+        os.rename(legacy_path, new_path)
+        legacy_meta = legacy_path + ".json"
+        new_meta = new_path + ".json"
+        if os.path.exists(legacy_meta) and not os.path.exists(new_meta):
+            os.rename(legacy_meta, new_meta)
+        return new_path
+    return None
+
+
 def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
     """
     Given a URL, look for the corresponding dataset in the local cache.
@@ -129,6 +163,10 @@ def get_from_cache(url: str, cache_dir: Optional[str] = None) -> str:
 
     # get cache path to put the file
     cache_path = os.path.join(cache_dir, filename)
+
+    if not os.path.exists(cache_path):
+        # Try migrating from legacy (long) filename format
+        _migrate_legacy_cache(cache_dir, url, etag, cache_path)
 
     if not os.path.exists(cache_path):
         # Download to temporary file, then copy to cache dir once finished.
