@@ -466,11 +466,11 @@ def create_tfidf_ann_index(
     empty_tfidfs_boolean_flags = numpy.array(
         concept_alias_tfidfs.sum(axis=1) != 0
     ).reshape(-1)
-    number_of_non_empty_tfidfs = sum(empty_tfidfs_boolean_flags == False)  # noqa: E712
+    number_of_empty_tfidfs = sum(empty_tfidfs_boolean_flags == False)  # noqa: E712
     total_number_of_tfidfs = numpy.size(concept_alias_tfidfs, 0)
 
     print(
-        f"Deleting {number_of_non_empty_tfidfs}/{total_number_of_tfidfs} aliases because their tfidf is empty"
+        f"Deleting {number_of_empty_tfidfs}/{total_number_of_tfidfs} aliases because their tfidf is empty"
     )
     # remove empty tfidf vectors, otherwise nmslib will crash
     concept_aliases = [
