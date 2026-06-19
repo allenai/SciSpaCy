@@ -492,7 +492,7 @@ EXTENDED_PATTERNS = [
             {"LEMMA": "which"},
             {"LEMMA": "look"},
             {"LEMMA": "like"},
-            hyponym,
+            hypernym,
         ],
         "position": "last",
     },
