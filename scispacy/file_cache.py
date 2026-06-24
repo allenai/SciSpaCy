@@ -60,12 +60,12 @@ def url_to_filename(url: str, etag: Optional[str] = None) -> str:
     last_part = url.split("/")[-1]
     url_bytes = url.encode("utf-8")
     url_hash = sha256(url_bytes)
-    filename = url_hash.hexdigest()
+    filename = url_hash.hexdigest()[:16]
 
     if etag:
         etag_bytes = etag.encode("utf-8")
         etag_hash = sha256(etag_bytes)
-        filename += "." + etag_hash.hexdigest()
+        filename += "." + etag_hash.hexdigest()[:16]
 
     filename += "." + last_part
     return filename
