@@ -244,7 +244,7 @@ class CandidateGenerator:
             [ann_index, tfidf_vectorizer, ann_concept_aliases_list, kb]
         ):
             raise ValueError(
-                "You cannot pass both a name argument and other constuctor arguments."
+                "You cannot pass both a name argument and other constructor arguments."
             )
 
         # Set the name to the default, after we have checked
