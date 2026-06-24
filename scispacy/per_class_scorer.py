@@ -18,9 +18,9 @@ class PerClassScorer:
         gold_spans = copy.copy(gold_spans)
         predicted_spans = copy.copy(predicted_spans)
         untyped_gold_spans = {(x[0], x[1]) for x in gold_spans}
-        untyped_predicted_spans = {(x[0], x[1]) for x in predicted_spans}
 
-        for untyped_span, span in zip(untyped_predicted_spans, predicted_spans):
+        for span in predicted_spans:
+            untyped_span = (span[0], span[1])
             if span in gold_spans:
                 self._true_positives[span[2]] += 1
                 gold_spans.remove(span)
