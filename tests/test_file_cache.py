@@ -48,6 +48,11 @@ class TestFileUtils(unittest.TestCase):
         baseurl = 'http://allenai.org/'
         assert url_to_filename(baseurl + '1') != url_to_filename(baseurl, etag='1')
 
+    def test_url_to_filename_length_on_ecryptfs(self):
+        url = "https://example.com/" + "segment/" * 30 + "tfidf_vectors_sparse.npz"
+        filename = url_to_filename(url, etag='"etag-value"')
+        assert len(filename) <= 143
+
     def test_url_to_filename_with_etags_eliminates_quotes(self):
         for url in ['http://allenai.org', 'http://cool.org',
                     'https://www.google.com', 'http://pytorch.org']:
