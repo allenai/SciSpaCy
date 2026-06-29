@@ -27,8 +27,8 @@ def evaluate_sentence_splitting(model_path: str,
     perfect = 0
     for abstract_name in os.listdir(data_directory):
 
-        abstract_sentences = [x.strip() for x in
-                              open(os.path.join(data_directory, abstract_name), "r")]
+        with open(os.path.join(data_directory, abstract_name), "r") as abstract_file:
+            abstract_sentences = [x.strip() for x in abstract_file]
 
         full_abstract = " ".join(abstract_sentences)
 
