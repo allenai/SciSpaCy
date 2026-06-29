@@ -30,10 +30,11 @@ def count_frequencies(language_class: Language, input_path: Path):
     tokenizer = combined_rule_tokenizer(language_class())
     counts = Counter()
     doc_counts = Counter()
-    for line in open(input_path, "r"):
-        words = [t.text for t in tokenizer(line)]
-        counts.update(words)
-        doc_counts.update(set(words))
+    with open(input_path, "r") as input_file:
+        for line in input_file:
+            words = [t.text for t in tokenizer(line)]
+            counts.update(words)
+            doc_counts.update(set(words))
 
     return counts, doc_counts
 
