@@ -186,10 +186,13 @@ class EntityLinker:
         for mention, candidates in zip(doc.ents, batch_candidates):
             predicted = []
             for cand in candidates:
+                entity = self.kb.cui_to_entity.get(cand.concept_id)
+                if entity is None:
+                    continue
                 score = max(cand.similarities)
                 if (
                     self.filter_for_definitions
-                    and self.kb.cui_to_entity[cand.concept_id].definition is None
+                    and entity.definition is None
                     and score < self.no_definition_threshold
                 ):
                     continue
