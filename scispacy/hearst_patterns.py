@@ -492,7 +492,8 @@ EXTENDED_PATTERNS = [
             {"LEMMA": "which"},
             {"LEMMA": "look"},
             {"LEMMA": "like"},
-            hyponym,
+            # "last" position patterns end with the hypernym (cf. which_sound_like)
+            hypernym,
         ],
         "position": "last",
     },
