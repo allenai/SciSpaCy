@@ -244,7 +244,7 @@ class CandidateGenerator:
             [ann_index, tfidf_vectorizer, ann_concept_aliases_list, kb]
         ):
             raise ValueError(
-                "You cannot pass both a name argument and other constuctor arguments."
+                "You cannot pass both a name argument and other constructor arguments."
             )
 
         # Set the name to the default, after we have checked
@@ -466,11 +466,12 @@ def create_tfidf_ann_index(
     empty_tfidfs_boolean_flags = numpy.array(
         concept_alias_tfidfs.sum(axis=1) != 0
     ).reshape(-1)
-    number_of_non_empty_tfidfs = sum(empty_tfidfs_boolean_flags == False)  # noqa: E712
+    # flags are True for non-empty vectors, so `== False` counts the empty ones.
+    number_of_empty_tfidfs = sum(empty_tfidfs_boolean_flags == False)  # noqa: E712
     total_number_of_tfidfs = numpy.size(concept_alias_tfidfs, 0)
 
     print(
-        f"Deleting {number_of_non_empty_tfidfs}/{total_number_of_tfidfs} aliases because their tfidf is empty"
+        f"Deleting {number_of_empty_tfidfs}/{total_number_of_tfidfs} aliases because their tfidf is empty"
     )
     # remove empty tfidf vectors, otherwise nmslib will crash
     concept_aliases = [
