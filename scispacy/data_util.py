@@ -183,18 +183,13 @@ def read_full_med_mentions(
     corpus = os.path.join(resolved_directory_path, expected_names[0])
     examples = med_mentions_example_iterator(corpus)
 
-    train_ids = {
-        x.strip()
-        for x in open(os.path.join(resolved_directory_path, expected_names[4]))
-    }
-    dev_ids = {
-        x.strip()
-        for x in open(os.path.join(resolved_directory_path, expected_names[2]))
-    }
-    test_ids = {
-        x.strip()
-        for x in open(os.path.join(resolved_directory_path, expected_names[3]))
-    }
+    # Explicitly close the id files instead of relying on GC.
+    with open(os.path.join(resolved_directory_path, expected_names[4])) as f:
+        train_ids = {x.strip() for x in f}
+    with open(os.path.join(resolved_directory_path, expected_names[2])) as f:
+        dev_ids = {x.strip() for x in f}
+    with open(os.path.join(resolved_directory_path, expected_names[3])) as f:
+        test_ids = {x.strip() for x in f}
 
     train_examples = []
     dev_examples = []
@@ -299,19 +294,20 @@ def read_ner_from_tsv(filename: str) -> List[SpacyNerExample]:
     """
     spacy_format_data = []
     examples: List[Tuple[str, str]] = []
-    for line in open(cached_path(filename)):
-        line = line.strip()
-        if line.startswith("-DOCSTART-"):
-            continue
-        # We have reached the end of a sentence.
-        if not line:
-            if not examples:
+    with open(cached_path(filename)) as tsv_file:
+        for line in tsv_file:
+            line = line.strip()
+            if line.startswith("-DOCSTART-"):
                 continue
-            spacy_format_data.append(_handle_sentence(examples))
-            examples = []
-        else:
-            word, entity = line.split("\t")
-            examples.append((word, entity))
+            # We have reached the end of a sentence.
+            if not line:
+                if not examples:
+                    continue
+                spacy_format_data.append(_handle_sentence(examples))
+                examples = []
+            else:
+                word, entity = line.split("\t")
+                examples.append((word, entity))
     if examples:
         spacy_format_data.append(_handle_sentence(examples))
 
