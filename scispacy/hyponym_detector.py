@@ -38,7 +38,10 @@ class HyponymDetector:
     ):
         self.nlp = nlp
 
-        self.patterns = BASE_PATTERNS
+        # Copy: `= BASE_PATTERNS` then `.extend(...)` mutated the module-global
+        # list, so each extended detector permanently appended EXTENDED_PATTERNS
+        # (and duplicated them) for every later detector.
+        self.patterns = list(BASE_PATTERNS)
         if extended:
             self.patterns.extend(EXTENDED_PATTERNS)
 
