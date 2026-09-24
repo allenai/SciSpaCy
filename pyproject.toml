@@ -38,12 +38,14 @@ license-files = [
 
 requires-python = ">=3.9,<3.13"
 dependencies = [
-    "spacy>=3.7.0,<3.9.0",
+    "spacy>=3.8.0,<3.9.0",
     "scipy",
     "requests>=2.0.0,<3.0.0",
     "conllu",
-    # numpy needs to be constrained until spacy and nmslib are rebuilt
-    "numpy<2.0",
+    # spacy>=3.8 and nmslib>=2.1.2 ship wheels built against numpy 2,
+    # so the numpy<2.0 cap (allenai/scispacy#536) is no longer needed;
+    # floor mirrors spacy 3.8's own numpy requirement on python>=3.9
+    "numpy>=1.19.0",
     "joblib",
     "nmslib>=2.1.2",
     "scikit-learn>=0.20.3",
