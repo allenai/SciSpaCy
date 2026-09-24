@@ -3,7 +3,7 @@ numpy
 # only supported on Python<3.11
 # https://github.com/allenai/scispacy/issues/519#issuecomment-2229915999
 scipy
-spacy>=3.7.0,<3.8.0
+spacy>=3.8.0,<3.9.0
 spacy-lookups-data
 pandas
 requests>=2.0.0,<3.0.0
